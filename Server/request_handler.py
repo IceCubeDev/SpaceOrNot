@@ -16,7 +16,9 @@
 
 from http_request import HttpRequest
 from queue import Queue
+import urllib.parse
 import os
+import re
 
 
 class RequestHandler(object):
@@ -52,18 +54,24 @@ class RequestHandler(object):
 	def init_request(self, request):
 		print("[DEBUG] Initializing request from %s.", str(self.client_address))
 		
-		if request.request_method == "GET":
-			print("[DEBUG] GET request from %s for %s." % (str(self.client_address),
+		if request.request_method == "GET" or request.request_method == "POST":
+			print("[DEBUG] Request from %s for %s." % (str(self.client_address),
 				request.request_path))
 			
-			path = self.server.server_variables["document_root"] + \
-				request.request_path
-			
-			if os.path.isfile(path):
-				print("[DEBUG] %s requested a file, which was found at '%s'." % path)
-			elif os.path.isdir(path):
-				print("[DEBUG] %s requested a directory, which was found at '%s'" % path)
-		
+			# We are registering a user
+			if request.request_path.find("/register") == 0:
+				print("[DEBUG] %s is registering a user." % str(self.client_address))
+				
+				idx = request.request_path.find("?")
+				if idx >= 0:
+					raw = request.request_path[idx + 1:].split("&")
+					for p in raw:
+						param = re.match("(.*)=(.*)", urllib.parse.unquote(p))
+						print(param.group(1), param.group(2))
+						
+						cursor = self.server.db_connection.cursor()
+						cur.execute("""SELECT 1 FROM users WHERE fb_id = """)
+					
 		self.current_request = request
 	
 	def process_current_request(self):
@@ -80,3 +88,6 @@ class RequestHandler(object):
 				print("[DEBUG] Request from %s processed." % str(self.client_address))
 				del self.current_request
 				self.current_request = None
+				
+	def process_request(self):
+		pass

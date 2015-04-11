@@ -20,6 +20,7 @@ import errno
 import sys
 import time
 import os
+import psycopg2
 from request_handler import RequestHandler
 
 
@@ -38,10 +39,9 @@ class Satellite(object):
 		self.input_list = [self.server_socket]
 		self.output_list = []
 		
-		self.running = False
+		self.db_connection = None
 		
-		path = os.path.dirname(os.path.realpath(__file__))
-		self.server_variables = {"document_root": path}
+		self.running = False
 		
 	def bind_server(self, server_address, server_port):
 		self.server_address = (server_address, server_port)
@@ -57,6 +57,15 @@ class Satellite(object):
 			print("[DEBUG] Listening on %s." % str(self.server_address))
 			self.running = True
 			
+	def connect_db(self, user, db, password):
+		try:
+			self.db_connection = psycopg2.connect("dbname='template1' user='dbuser' host='localhost' password='dbpass'")
+		except Exception as ex:
+			print("[WARN] Unable to connect to the database server:", str(ex.args[1]))
+			return False
+		else:
+			return True
+	
 	def run_server(self):
 		while self.running:
 			(read, write, error) = select.select(self.input_list, 
