@@ -1,10 +1,15 @@
+CREATE TABLE pictures (
+     id INT PRIMARY KEY,
+     path STRING NOT NULL,
+);
+
 CREATE TABLE users (
-	id int PRIMARY KEY,
-	user_fb_id int NOT NULL);
-	
+     id INT PRIMARY KEY,
+     fb_id STRING NOT NULL
+);
+
 CREATE TABLE spaces (
-	user_id INT NOT NULL,
-	image_id INT NOT NULL,
-	space BOOLEAN NOT NULL);
-	
-ALTER TABLE spaces ADD FOREIGN KEY (user_id) REFERENCES users(id); 
+     pic_id INT NOT NULL,
+     user_id INT NOT NULL,
+     space BOOLEAN
+);

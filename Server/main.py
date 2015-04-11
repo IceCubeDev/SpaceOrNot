@@ -1,15 +1,26 @@
-from http.server import HTTPServer
-from satellite import *
+"""
+   Copyright 2015 - Ivan Dortulov
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
+
+from satellite import Satellite
 
 
 def main():
-	print("Hello, world!");
-	
-	server_address = (("localhost", 8999))
-	handler_class = Satellite
-	httpd = HTTPServer(server_address, handler_class)
-	httpd.serve_forever()
-	
-	
+	server = Satellite()
+	server.bind_server("localhost", 27015)
+	server.run_server()
+
 if __name__ == "__main__":
 	main()
