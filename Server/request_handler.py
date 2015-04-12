@@ -19,7 +19,7 @@ from queue import Queue
 import urllib.parse
 import os
 import re
-
+import random
 
 class RequestHandler(object):
 	
@@ -36,6 +36,8 @@ class RequestHandler(object):
 		self.current_request = None
 		
 		self.should_close = False
+		random.seed()
+		
 		
 	def on_data_received(self, data):
 		print("[DEBUG] Processing data from %s." % str(self.client_address))
@@ -90,4 +92,11 @@ class RequestHandler(object):
 				self.current_request = None
 				
 	def process_request(self):
-		pass
+		content = b""
+		content = str(len(self.server.images)).encode() + b"\r\n"
+		content += self.server.images[random.randrange(len(self.server.images) - 1)].encode()
+	
+		self.output_buffer += b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n"
+		self.output_buffer += b"Content-Length: " + str(len(content)).encode() + b"\r\n\r\n"
+		self.output_buffer += content
+		self.should_close = False

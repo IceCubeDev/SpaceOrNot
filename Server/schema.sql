@@ -1,11 +1,12 @@
 CREATE TABLE pictures (
      id INT PRIMARY KEY,
-     path STRING NOT NULL,
+     path TEXT NOT NULL
 );
 
 CREATE TABLE users (
-     id INT PRIMARY KEY,
-     fb_id STRING NOT NULL
+     id SERIAL PRIMARY KEY,
+     fb_id TEXT NOT NULL,
+     real_name TEXT
 );
 
 CREATE TABLE spaces (

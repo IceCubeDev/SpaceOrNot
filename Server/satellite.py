@@ -43,6 +43,24 @@ class Satellite(object):
 		
 		self.running = False
 		
+		self.images = ["http://2.bp.blogspot.com/-MrdX0JhwM9U/T65PZsmNS7I/AAAAAAAAAKM/SkTZHvBUMq8/s1600/1336023490071.png",
+						"http://th01.deviantart.net/fs70/PRE/f/2012/260/0/0/space_wallpaper_1920x1080_without_lower_planet_by_danielbemelen-d5ezr9r.jpg",
+						"http://images.nationalgeographic.com/wpf/media-live/photos/000/581/overrides/space208-spiral-galaxy_58157_600x450.jpg",
+						"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtJoI9u2cUUMcgiSIvM-NsBrTc7ru5W78ISRzgnPnScGAjYl9YFw",
+						"http://images.fineartamerica.com/images-medium-large/1-stars-in-space-stocktrek.jpg",
+						"https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQiuiJqwJSIEOFvghNUo46HKJXVBpUCKvtMgDsl9J3lFuZvVldi",
+						"http://cdn.theatlantic.com/static/infocus/hubble120113/s_h01_hs201313.jpg",
+						"http://www.likecool.com/Gear/Pic/Hubble%20Space%20Telescope%20Images/Hubble-Space-Telescope-Images-9.jpg",
+						"https://pbs.twimg.com/media/BcvmxibIYAAH8a3.jpg:large",
+						"http://images.nationalgeographic.com/wpf/media-live/photos/000/001/cache/cleveland-volcano_111_600x450.jpg"
+						"http://www.hdwallpapers.in/walls/nasa_hubble_spacescape-wide.jpg",
+						"http://photojournal.jpl.nasa.gov/jpeg/PIA17563.jpg",
+					   "http://hdnextyear.com/wp-content/uploads/2015/01/space-wallpaper-space-picture-space-wallpaper.jpg",
+					   "http://vignette1.wikia.nocookie.net/powerlisting/images/e/e4/DEEP_SPACE.jpg/revision/latest?cb=20131006085915",
+					   "https://www.seoclerk.com/pics/want23366-14loET1423666346.jpg",
+					   "http://nice-cool-pics.com/data/media/8/firefox_nebula_vs._hubble-fox.jpg",
+					   ]
+		
 	def bind_server(self, server_address, server_port):
 		self.server_address = (server_address, server_port)
 		
@@ -56,15 +74,6 @@ class Satellite(object):
 		else:
 			print("[DEBUG] Listening on %s." % str(self.server_address))
 			self.running = True
-			
-	def connect_db(self, user, db, password):
-		try:
-			self.db_connection = psycopg2.connect("dbname='template1' user='dbuser' host='localhost' password='dbpass'")
-		except Exception as ex:
-			print("[WARN] Unable to connect to the database server:", str(ex.args[1]))
-			return False
-		else:
-			return True
 	
 	def run_server(self):
 		while self.running:
@@ -117,12 +126,8 @@ class Satellite(object):
 						else:
 							print("[DEBUG] Received %d bytes of data from %s" %
 								(len(recv_data), conn.client_address))
+							print(recv_data)
 							conn.on_data_received(recv_data)
-							
-			for error_sock in error:
-				self.close_socket(error_sock)
-				print("[WARN] Socket error.")
-				self.close_socket(error_sock)
 				
 			for conn in self.connections:
 				if len(conn.output_buffer) > 0:
@@ -130,8 +135,9 @@ class Satellite(object):
 						data = conn.output_buffer[:Satellite.CHUNK_SIZE]
 						sent = conn.socket.send(data)
 					except socket.error as ex:
-						print("[WARN] Error receiving from %d", 
-							conn.client_address)
+						print("[WARN] Error sending to %s", 
+							str(conn.client_address))
+						self.close_connection(conn)
 					else:
 						print("[DEBUG] Received %d bytes from %s.",
 							(sent, conn.client_address))		

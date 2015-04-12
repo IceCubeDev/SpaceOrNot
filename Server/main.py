@@ -15,12 +15,16 @@
 """
 
 from satellite import Satellite
+from db_helper import DBHelper
 
 
 def main():
 	server = Satellite()
-	server.bind_server("localhost", 27015)
+	server.bind_server("0.0.0.0", 27016)
 	server.run_server()
+	#db = DBHelper("spaceornot", "postgres", "postgres")
+	#if db.register_user("123456", "Ivan Ivanov"):
+	#	print("IT WORKS!")
 
 if __name__ == "__main__":
 	main()
